@@ -39,6 +39,7 @@ Thumbs.db
 # Archivos de Git
 .git/
 .gitignore
+frontend/.git/
 
 # Documentación
 *.md

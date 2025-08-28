@@ -1,4 +1,4 @@
-# Dockerfile para ConceptHouse Academy Frontend - CORREGIDO PARA MONOREPO
+# Dockerfile para ConceptHouse Academy Frontend - OPTIMIZADO PARA MONOREPO
 FROM node:18-alpine AS base
 
 # Instalar dependencias solo cuando sea necesario
@@ -8,7 +8,7 @@ WORKDIR /app
 
 # Copiar archivos de dependencias desde el directorio frontend
 COPY frontend/package.json frontend/package-lock.json* ./
-RUN npm ci
+RUN npm ci --only=production
 
 # Rebuild the source code only when needed
 FROM base AS builder
