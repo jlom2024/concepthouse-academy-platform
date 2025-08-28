@@ -1,103 +1,303 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [isLoading, setIsLoading] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<string>('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleTestBackend = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/test');
+      const data = await response.json();
+      setBackendStatus(data.message);
+    } catch (error) {
+      setBackendStatus('Error conectando con el backend');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleTestHealth = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/health');
+      const data = await response.json();
+      setBackendStatus(`Health: ${data.status} - ${data.service}`);
+    } catch (error) {
+      setBackendStatus('Error en health check');
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #1a1a1a 0%, #000000 100%)',
+      color: 'white',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      {/* Hero Section */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        textAlign: 'center',
+        padding: '20px'
+      }}>
+        <div>
+          {/* Logo */}
+          <div style={{
+            width: '128px',
+            height: '128px',
+            background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+            borderRadius: '50%',
+            margin: '0 auto 32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '48px',
+            fontWeight: 'bold',
+            color: 'black'
+          }}>
+            CH
+          </div>
+
+          {/* Title */}
+          <h1 style={{
+            fontSize: '4rem',
+            fontWeight: 'bold',
+            margin: '0 0 24px 0',
+            background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text'
+          }}>
+            ConceptHouse Academy
+          </h1>
+
+          {/* Description */}
+          <p style={{
+            fontSize: '1.5rem',
+            color: '#cccccc',
+            margin: '0 0 32px 0',
+            maxWidth: '600px'
+          }}>
+            La primera academia creada por la Content House que genera miles de millones de vistas
+          </p>
+
+          {/* Buttons */}
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            marginBottom: '32px'
+          }}>
+            <button
+              onClick={handleTestBackend}
+              disabled={isLoading}
+              style={{
+                background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+                color: 'black',
+                border: 'none',
+                padding: '16px 32px',
+                borderRadius: '50px',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                opacity: isLoading ? 0.5 : 1,
+                transition: 'transform 0.2s'
+              }}
+              onMouseOver={(e) => {
+                if (!isLoading) e.target.style.transform = 'scale(1.05)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'scale(1)';
+              }}
+            >
+              {isLoading ? 'Probando...' : 'Probar Backend'}
+            </button>
+            
+            <button
+              onClick={handleTestHealth}
+              style={{
+                background: 'transparent',
+                border: '2px solid #FFD700',
+                color: '#FFD700',
+                padding: '16px 32px',
+                borderRadius: '50px',
+                fontSize: '1.2rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#FFD700';
+                e.target.style.color = 'black';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.color = '#FFD700';
+              }}
+            >
+              Health Check
+            </button>
+          </div>
+
+          {/* Backend Status */}
+          {backendStatus && (
+            <div style={{
+              background: '#333333',
+              border: '1px solid #555555',
+              borderRadius: '8px',
+              padding: '16px',
+              maxWidth: '500px',
+              margin: '0 auto'
+            }}>
+              <p style={{ color: '#00ff00', fontWeight: 'bold', margin: 0 }}>
+                {backendStatus}
+              </p>
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </div>
+
+      {/* Courses Section */}
+      <div style={{
+        padding: '80px 20px',
+        background: 'rgba(0,0,0,0.5)'
+      }}>
+        <h2 style={{
+          fontSize: '3rem',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          margin: '0 0 64px 0',
+          background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          Tu Formación Apenas Comienza
+        </h2>
+        
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '32px',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          {[
+            { title: 'Storytelling', desc: 'Estructura y narrativa profesional', color: 'linear-gradient(45deg, #3B82F6, #8B5CF6)' },
+            { title: 'Iluminación', desc: 'Domina luz natural y artificial', color: 'linear-gradient(45deg, #10B981, #3B82F6)' },
+            { title: 'Postproducción', desc: 'Rápido, potente y con estilo', color: 'linear-gradient(45deg, #8B5CF6, #EC4899)' },
+            { title: 'IA Aplicada', desc: 'IA para multiplicar creatividad', color: 'linear-gradient(45deg, #F97316, #EF4444)' },
+            { title: 'Branding', desc: 'Construye una marca que conecta', color: 'linear-gradient(45deg, #EAB308, #10B981)' },
+            { title: 'Contenido Viral', desc: 'Algoritmos, tendencias y series', color: 'linear-gradient(45deg, #EC4899, #8B5CF6)' }
+          ].map((course, index) => (
+            <div key={index} style={{
+              background: '#333333',
+              border: '1px solid #555555',
+              borderRadius: '16px',
+              padding: '24px',
+              cursor: 'pointer',
+              transition: 'transform 0.2s'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.transform = 'scale(1.05)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.transform = 'scale(1)';
+            }}
+            >
+              <div style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '8px',
+                background: course.color,
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: 'white'
+              }}>
+                {index + 1}
+              </div>
+              <h3 style={{
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                margin: '0 0 8px 0',
+                color: 'white'
+              }}>
+                {course.title}
+              </h3>
+              <p style={{ color: '#cccccc', margin: 0 }}>
+                {course.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div style={{
+        padding: '80px 20px',
+        background: 'linear-gradient(45deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1))',
+        textAlign: 'center'
+      }}>
+        <h2 style={{
+          fontSize: '3rem',
+          fontWeight: 'bold',
+          margin: '0 0 32px 0',
+          color: 'white'
+        }}>
+          La Pre-Venta ya está Abierta
+        </h2>
+        <p style={{
+          fontSize: '1.5rem',
+          color: '#cccccc',
+          margin: '0 0 32px 0',
+          maxWidth: '600px',
+          marginLeft: 'auto',
+          marginRight: 'auto'
+        }}>
+          Forma parte de la primera generación de creadores formados bajo el método ConceptHouse
+        </p>
+        <div style={{
+          fontSize: '4rem',
+          fontWeight: 'bold',
+          margin: '0 0 32px 0',
+          background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          $199.00 USD
+        </div>
+        <button style={{
+          background: 'linear-gradient(45deg, #FFD700, #FFA500)',
+          color: 'black',
+          border: 'none',
+          padding: '24px 48px',
+          borderRadius: '50px',
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          transition: 'transform 0.2s'
+        }}
+        onMouseOver={(e) => {
+          e.target.style.transform = 'scale(1.05)';
+        }}
+        onMouseOut={(e) => {
+          e.target.style.transform = 'scale(1)';
+        }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          SÍ, QUIERO SER UN CREADOR PROFESIONAL
+        </button>
+      </div>
     </div>
   );
 }
