@@ -1,0 +1,1 @@
+{"name":"concepthouse-backend","version":"1.0.0","main":"src/app.ts","scripts":{"dev":"nodemon src/app.ts","start":"node dist/app.js","build":"tsc"},"dependencies":{"express":"^5.1.0","cors":"^2.8.5","helmet":"^8.1.0","morgan":"^1.10.1","dotenv":"^17.2.1"},"devDependencies":{"nodemon":"^3.1.10","typescript":"^5.9.2","ts-node":"^10.9.2"}}
